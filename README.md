@@ -58,7 +58,7 @@ To get started with this project, follow the steps below:
    cd build
    bitbake test-dynamic
    ```
-6 **If you want to check the logs of recipes and the executions results of them**
+6. **If you want to check the logs of recipes and the executions results of them**
 
    ```bash
    cd build/tmp/work
