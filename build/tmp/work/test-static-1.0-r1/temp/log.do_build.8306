@@ -1,0 +1,3 @@
+DEBUG: Executing shell function do_build
+WARNING: exit code 126 from a shell command.
+/home/shadibahaa/Downloads/HMM_bitbake/build/tmp/work/test-static-1.0-r1/temp/run.do_build.8306: 81: /home/shadibahaa/Downloads/HMM_bitbake/build/tmp/work/test-static-1.0-r1/temp/../../../../../project-files/run_executable.sh: Permission denied

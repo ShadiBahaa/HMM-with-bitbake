@@ -1,0 +1,3 @@
+DEBUG: Executing shell function do_build
+Directory '../../../project-files/' does not exist.
+WARNING: exit code 1 from a shell command.

@@ -1,0 +1,17 @@
+DEBUG: Executing shell function do_build
+gcc -fPIC -o hmm_pic.o -c HMM.c
+HMM.c: In function ‘HMMtraverse’:
+HMM.c:539:31: warning: format ‘%d’ expects argument of type ‘int’, but argument 2 has type ‘size_t’ {aka ‘long unsigned int’} [-Wformat=]
+  539 |         printf("Node number: %d, Address: %10p, free: %lu, size: %lu\r\n", cnt, cur, cur->is_free, cur->size);
+      |                              ~^                                            ~~~
+      |                               |                                            |
+      |                               int                                          size_t {aka long unsigned int}
+      |                              %ld
+HMM.c:539:57: warning: format ‘%lu’ expects argument of type ‘long unsigned int’, but argument 4 has type ‘int’ [-Wformat=]
+  539 |         printf("Node number: %d, Address: %10p, free: %lu, size: %lu\r\n", cnt, cur, cur->is_free, cur->size);
+      |                                                       ~~^                            ~~~~~~~~~~~~
+      |                                                         |                               |
+      |                                                         long unsigned int               int
+      |                                                       %u
+gcc -shared -o libhmm.so hmm_pic.o
+DEBUG: Shell function do_build finished

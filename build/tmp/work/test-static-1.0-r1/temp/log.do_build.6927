@@ -1,0 +1,6 @@
+ERROR: Error during parse shell code, the last 5 lines are:
+    gcc "$test_c_path" "$libhmm_path" -o "$output_executable" --static
+
+
+    "$run_script_path" "$output_executable"
+

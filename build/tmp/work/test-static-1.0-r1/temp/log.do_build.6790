@@ -1,0 +1,6 @@
+ERROR: Error during parse shell code, the last 5 lines are:
+    if [ $? -ne 0 ]; then
+        echo "Execution of $run_script_path failed."
+        return 1
+    fi
+
