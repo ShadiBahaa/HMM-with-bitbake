@@ -66,3 +66,4 @@ To get started with this project, follow the steps below:
    go to log.do_build files
    ```
 ### For more clarification, check this video: 
+[Watch the video](https://drive.google.com/file/d/1IuomYCxgBt7EHwJVTPQBtrfJM6oIjnkM/view?usp=sharing)
