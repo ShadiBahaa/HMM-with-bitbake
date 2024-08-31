@@ -27,7 +27,7 @@ To get started with this project, follow the steps below:
 
 ### Installation and Usage
 
-1. **Clone the Repository and set the necessary env**
+1. **Clone the Repository**
 
    ```bash
    git clone https://github.com/ShadiBahaa/HMM-with-bitbake.git
