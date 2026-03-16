@@ -43,25 +43,6 @@ jobs:
       - name: Verify BitBake installation
         run: bitbake --version
 
-      - name: Ensure BitBake CI config exists
-        working-directory: build
-        run: |
-          mkdir -p conf
-          if [ ! -f conf/local.conf ]; then
-            {
-              echo 'MACHINE = "qemux86"'
-              echo 'BB_NUMBER_THREADS = "2"'
-              echo 'PARALLEL_MAKE = "-j2"'
-            } > conf/local.conf
-          fi
-
-          # GitHub-hosted runners can block uid/gid map writes used by
-          # BitBake's network namespace isolation path (/proc/self/uid_map).
-          # Force-disable network unsharing for CI tasks.
-          if ! grep -q '^BB_UNSHARE_NETWORK = "0"$' conf/local.conf; then
-            echo 'BB_UNSHARE_NETWORK = "0"' >> conf/local.conf
-          fi
-
       - name: Build and test (${{ matrix.target }})
         working-directory: build
         run: |
