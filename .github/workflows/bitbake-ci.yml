@@ -43,18 +43,6 @@ jobs:
       - name: Verify BitBake installation
         run: bitbake --version
 
-      - name: Ensure BitBake local.conf exists
-        working-directory: build
-        run: |
-          mkdir -p conf
-          if [ ! -f conf/local.conf ]; then
-            {
-              echo 'MACHINE = "qemux86"'
-              echo 'BB_NUMBER_THREADS = "2"'
-              echo 'PARALLEL_MAKE = "-j2"'
-            } > conf/local.conf
-          fi
-
       - name: Build and test (${{ matrix.target }})
         working-directory: build
         run: |
