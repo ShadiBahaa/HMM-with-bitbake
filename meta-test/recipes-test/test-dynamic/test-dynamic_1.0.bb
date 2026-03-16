@@ -1,5 +1,6 @@
 DESCRIPTION = "Testing HMM dynamically"
 PR = "r1"
+do_build[network] = "1"
 
 do_build() {
     # Set the paths to the files
