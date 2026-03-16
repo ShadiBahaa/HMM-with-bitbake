@@ -37,7 +37,6 @@ void perform_random_operations()
         case CALLOC:
         {
             size_t num = rand() % MAX_SIZE + 1;
-            size_t size = rand() % MAX_SIZE + 1;
             allocated_blocks[i] = calloc(num, MAX_SIZE/num);
             //printf("Allocated block %p with %zu elements of size %zu\n", allocated_blocks[i], num, size);
             break;
