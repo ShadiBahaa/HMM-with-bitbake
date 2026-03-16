@@ -3,7 +3,7 @@
 #include <time.h>
 #include <string.h>
 #include <math.h>
-#define _BSD_SOURCE
+#include <unistd.h>
 
 int min(int a, int b){
     if (a < b)return a;
@@ -14,6 +14,8 @@ int min(int a, int b){
 int
 main(int argc, char *argv[])
 {
+    (void)argc;
+    (void)argv;
     srand(time(NULL));   
     char *ptr[MAX_ALLOCS];
     int freeStep, freeMin, freeMax, blockSize, numAllocs, j;

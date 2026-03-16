@@ -58,6 +58,10 @@ static mem_chunk_t *tail;
 
 static size_t current_free_size; 
 
+/**< Start and end addresses of memory acquired from sbrk. */
+static void *heap_start;
+static void *heap_end;
+
 /**
  * @brief Removes a free memory block from the list of free blocks in hash table.
  * 
@@ -73,6 +77,8 @@ static void HMMremove_free_block(mem_chunk_t *block)
         return;
     }
     size_t cur_size = block->size;
+    if (cur_size < ALIGNMENT)
+        return;
     size_t idx = (cur_size / ALIGNMENT) - 1;
         // If the index is within bounds, traverse the free list to remove the block.
 
@@ -103,16 +109,6 @@ static void HMMremove_free_block(mem_chunk_t *block)
     }
 }
 /**
- * @brief Checks if a memory block is found in the list of free blocks in hash table.
- * 
- * @param block Pointer to the memory block to be checked.
- * @return 1 if the block is found, 0 otherwise.
- */
-static unsigned char HMMis_block_found(mem_chunk_t *block)
-{
-    return block->is_added;
-}
-/**
  * @brief Adds a free memory block to the list of free blocks in hash table.
  * 
  * @param block Pointer to the memory block to be added.
@@ -123,6 +119,8 @@ static void HMMadd_free_block(mem_chunk_t *block)
         return;
 // Calculate the index for the block based on its size.
     size_t cur_size = block->size;
+    if (cur_size < ALIGNMENT)
+        return;
     size_t idx = (cur_size / ALIGNMENT) - 1;
         // If the index is within bounds and the block is not already added, add it to the free list.
 
@@ -152,6 +150,8 @@ static void HMMadd_free_block(mem_chunk_t *block)
  */
 static mem_chunk_t *HMMget_free_block(size_t size)
 {
+    if (size < ALIGNMENT)
+        return NULL;
     size_t idx = (size / ALIGNMENT) - 1;
     if (idx < MULTIPLES_MAX)
     {
@@ -247,6 +247,7 @@ static mem_chunk_t *HMMget_free_chunk(size_t size)
                 splitted->prev = current;
                 splitted->next = current_next;
                 splitted->is_free = 1;
+                splitted->is_added = 0;
                 if (current_next)
                     current_next->prev = splitted;
                 current->next = splitted;
@@ -270,7 +271,12 @@ static mem_chunk_t *HMMget_free_chunk(size_t size)
         // If no free block is large enough, allocate new memory from the system.
 
     size_t allocation_size = ALLOCATED_BYTES;
-    size_t num_allocated_bytes = ((size + sizeof(mem_chunk_t) + allocation_size) / allocation_size) * allocation_size;
+    if (size > (SIZE_MAX - sizeof(mem_chunk_t) - allocation_size))
+    {
+        return NULL;
+    }
+    size_t total_requested = size + sizeof(mem_chunk_t) + allocation_size;
+    size_t num_allocated_bytes = (total_requested / allocation_size) * allocation_size;
     void *new_free_space = sbrk(num_allocated_bytes);
     if (new_free_space == (void *)-1)
     {
@@ -289,6 +295,10 @@ static mem_chunk_t *HMMget_free_chunk(size_t size)
         // Initialize a new memory chunk and add it to the list.
 
     mem_chunk_t *new_chunk = (mem_chunk_t *)new_free_space;
+    if (heap_start == NULL)
+        heap_start = new_free_space;
+    heap_end = (unsigned char *)new_free_space + num_allocated_bytes;
+    new_chunk->is_added = 0;
     new_chunk->is_free = 1;
     new_chunk->size = num_allocated_bytes - sizeof(mem_chunk_t);
     new_chunk->prev = tail;
@@ -315,6 +325,15 @@ static void HMMfree(void *ptr)
     }
     // Get the memory chunk from the given pointer.
 
+    if (heap_start == NULL || heap_end == NULL)
+    {
+        return;
+    }
+    if ((unsigned char *)ptr < ((unsigned char *)heap_start + sizeof(mem_chunk_t)) ||
+        (unsigned char *)ptr >= (unsigned char *)heap_end)
+    {
+        return;
+    }
     mem_chunk_t *alloacted_member = (mem_chunk_t *)((unsigned char *)ptr - sizeof(mem_chunk_t)); 
         // Check if the memory is already free, if not, free it.
 
@@ -378,6 +397,7 @@ static void HMMfree(void *ptr)
             {
                 return;
             }
+            heap_end = new_break;
         }
     }
 }
@@ -536,7 +556,7 @@ void HMMtraverse(void)
     size_t cnt = 1;
     while (cur)
     {
-        printf("Node number: %d, Address: %10p, free: %lu, size: %lu\r\n", cnt, cur, cur->is_free, cur->size);
+        printf("Node number: %zu, Address: %10p, free: %u, size: %zu\r\n", cnt, (void *)cur, (unsigned int)cur->is_free, cur->size);
         cnt++;
         cur = cur->next;
     }

@@ -1,9 +1,7 @@
 DESCRIPTION = "Building the HMM library statically"
 PR = "r1"
 do_build () {
-    log_dir="$(dirname "$(realpath "$0")")"
-    
-    local dir="$log_dir/../../../../../project-files"
+    local dir="${TOPDIR}/../project-files"
 
     if [ ! -d "$dir" ]; then
         echo "Directory '$dir' does not exist."

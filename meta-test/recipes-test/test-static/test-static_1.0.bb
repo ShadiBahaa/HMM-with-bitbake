@@ -3,11 +3,11 @@ PR = "r1"
 
 do_build() {
     # Set the paths to the files
-    log_dir="$(dirname "$(realpath "$0")")"
-    local test_c_path="$log_dir/../../../../../project-files/test.c"
-    local libhmm_path="$log_dir/../../../../../project-files/libhmm.a"
-    local run_script_path="$log_dir/../../../../../project-files/run_executable.sh"
-    local output_executable="$log_dir/../../../../../project-files/test.exe"
+    local project_dir="${TOPDIR}/../project-files"
+    local test_c_path="$project_dir/test.c"
+    local libhmm_path="$project_dir/libhmm.a"
+    local run_script_path="$project_dir/run_executable.sh"
+    local output_executable="$project_dir/test.exe"
 
     # Compile the test.c with libhmm.a into test.exe statically
     gcc "$test_c_path" "$libhmm_path" -o "$output_executable" --static
@@ -24,4 +24,3 @@ do_build() {
         return 1
     fi
 }
-
