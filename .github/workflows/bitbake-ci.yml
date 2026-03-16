@@ -1,0 +1,50 @@
+name: BitBake CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build-and-test:
+    name: ${{ matrix.target }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - target: static
+            build_recipe: build-static
+            test_recipe: test-static
+          - target: dynamic
+            build_recipe: build-dynamic
+            test_recipe: test-dynamic
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential git
+
+      - name: Install BitBake
+        run: |
+          git clone --depth 1 https://github.com/openembedded/bitbake.git "$RUNNER_TEMP/bitbake"
+          echo "PATH=$RUNNER_TEMP/bitbake/bin:$PATH" >> "$GITHUB_ENV"
+          echo "PYTHONPATH=$RUNNER_TEMP/bitbake/lib:${PYTHONPATH:-}" >> "$GITHUB_ENV"
+
+      - name: Verify BitBake installation
+        run: bitbake --version
+
+      - name: Build and test (${{ matrix.target }})
+        working-directory: build
+        run: |
+          bitbake "${{ matrix.build_recipe }}"
+          bitbake "${{ matrix.test_recipe }}"
