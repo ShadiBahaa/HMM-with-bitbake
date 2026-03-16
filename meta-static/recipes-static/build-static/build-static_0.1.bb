@@ -1,5 +1,7 @@
 DESCRIPTION = "Building the HMM library statically"
 PR = "r1"
+do_build[network] = "1"
+
 do_build () {
     local dir="${TOPDIR}/../project-files"
 
